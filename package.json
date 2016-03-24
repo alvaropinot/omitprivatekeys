@@ -1,0 +1,36 @@
+{
+  "name": "omitprivatekeys",
+  "version": "0.0.1",
+  "description": "omit private keys from objects",
+  "main": "index.js",
+  "scripts": {
+    "test": "istanbul cover test/*.js | tap-spec",
+    "watch": "nodemon --exec npm test",
+    "lint": "eslint **/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/alvaropinot/omitprivatekeys"
+  },
+  "keywords": [
+    "object",
+    "private",
+    "keys",
+    "omit",
+    "filter"
+  ],
+  "author": "Alvaro Pinot",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alvaropinot/omitprivatekeys/issues"
+  },
+  "homepage": "https://github.com/alvaropinot/omitprivatekeys",
+  "devDependencies": {
+    "eslint": "^2.4.0",
+    "eslint-config-google": "^0.4.0",
+    "istanbul": "^0.4.2",
+    "nodemon": "^1.9.1",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.5.1"
+  }
+}
