@@ -1,5 +1,11 @@
 const test = require('tape');
-const omitPrivateKeys = require('../');
+const omitPrivateKeys = require('../')();
+const omitPrivateKeysNotExctd = require('../');
+
+test('omitPrivateKeysNotExctd must be defined', t => {
+  t.equal(typeof omitPrivateKeysNotExctd, 'function', 'should be a function');
+  t.end();
+});
 
 test('omitPrivateKeys must be defined', t => {
   t.equal(typeof omitPrivateKeys, 'function', 'should be a function');
@@ -11,7 +17,7 @@ test('if convention is defined and is not an instance of RegExp', t => {
   var wrongConventions = ['', 1, false, null, {}];
 
   wrongConventions.forEach(function (elm) {
-    t.throws(() => omitPrivateKeys(obj, elm), undefined, 'Should throw an error if convention is ' + typeof elm);
+    t.throws(() => omitPrivateKeysNotExctd(elm), undefined, 'Should throw an error if convention is ' + typeof elm);
   })
   t.end();
 });
@@ -19,7 +25,7 @@ test('if convention is defined and is not an instance of RegExp', t => {
 test('if convention is an instance of RegExp', t => {
     const obj = { a : 1, _b : 2 };
     // ok
-    t.doesNotThrow(() => omitPrivateKeys(obj, new RegExp('^\$\$')));
+    t.doesNotThrow(() => omitPrivateKeysNotExctd(/^\$\$/));
     t.end();
 });
 
@@ -67,6 +73,8 @@ test('if no convention passed should not clean keys containing `_` other positio
 });
 
 test('if convention is passed should clean keys that match the RegExp', t => {
+  const omitPrivateKeysConv = omitPrivateKeysNotExctd(/^\$\$/); //pass a convention
+
   const obj = {
     _foo: 'foo',
     $$bar: 'bar',
@@ -76,7 +84,8 @@ test('if convention is passed should clean keys that match the RegExp', t => {
     c: true,
     $$cuba : 1
   };
-  const actual = omitPrivateKeys(obj, /^\$\$/);
+
+  const actual = omitPrivateKeysConv(obj);
 
   const expected = {
     _foo: 'foo',
@@ -90,5 +99,51 @@ test('if convention is passed should clean keys that match the RegExp', t => {
     actual, expected,
     'should return a object without keys matched by `/^\\$\\$/`'
   );
+  t.end();
+});
+
+test('if lib() is used more than once', t => {
+  const omitPrivateKeysWithDefault = omitPrivateKeysNotExctd();
+  const omitPrivateKeysConv = omitPrivateKeysNotExctd(/^\$\$/); //pass a convention
+  const obj = {
+    _foo : 1,
+     bar : 2,
+     $$cuba : 3
+  };
+
+  const expected = {
+    bar : 2,
+    $$cuba : 3
+  };
+
+  const expectedIfConvention = {
+    _foo: 1,
+    bar : 2
+  };
+
+  t.deepEqual(
+    omitPrivateKeysWithDefault(obj), expected,
+    'should Work  with only 1 parameter: the Object'
+  );
+
+  t.deepEqual(
+    omitPrivateKeysConv(obj), expectedIfConvention,
+    'if passed a convention : should Work  with only 1 parameter: the Object'
+  );
+
+  var i = 1;
+  while (i <= 3) {
+    t.deepEqual(
+      omitPrivateKeysWithDefault(obj), expected,
+      'should work the same function more than once: ' + i
+    );
+
+    t.deepEqual(
+      omitPrivateKeysConv(obj), expectedIfConvention,
+      'if passed a convention : should work the same function more than once: ' + i
+    );
+    i++;
+  }
+
   t.end();
 });
