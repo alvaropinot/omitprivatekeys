@@ -12,18 +12,14 @@ function pickKeysBy (originalObject, predicate) {
   {});
 }
 
-const omitPrivateKeys = function (originalObject, convention) {
-  var newObj;
+const omitPrivateKeys = function (convention) {
   if (convention === undefined) {
-    newObj = pickKeysBy(originalObject, (key) => key[0] !== '_');// Check if a given key starts with `_`.
+    return (originalObject) => pickKeysBy(originalObject, (key) => key[0] !== '_');// Check if a given key starts with `_`.
   }
   else if (convention instanceof RegExp) {
-    newObj = pickKeysBy(originalObject, (key) => !convention.test(key));//Check if key match with convention
+    return (originalObject) => pickKeysBy(originalObject, (key) => !convention.test(key));//Check if key match with convention
   }
-  else {
-    throw new Error('convention argument must be an instace of RegExp if defined');
-  }
-  return newObj;
-};
+  throw new Error('convention argument must be an instace of RegExp if defined');
+}
 
 module.exports = omitPrivateKeys;
